@@ -11,12 +11,16 @@ class Node {
 		if (node.data <= this.data) {
 			if (this.left == null) {
 				this.left = node;
+				this.left.x = this.x - 40;
+				this.left.y = this.y + 20;
 			} else {
 				this.left.insert(node);
 			}
 		} else {
 			if (this.right == null) {
 				this.right = node;
+				this.right.x = this.x + 40;
+				this.right.y = this.y + 20;
 			} else {
 				this.right.insert(node);
 			}
