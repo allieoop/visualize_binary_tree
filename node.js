@@ -1,8 +1,10 @@
 class Node {
-	constructor(val) {
+	constructor(val, x, y) {
 		this.left = null;
 		this.right = null;
 		this.data = val;
+		this.x = x;
+		this.y = y;
 	}
 
 	insert(node) {
@@ -26,6 +28,9 @@ class Node {
 			this.left.traverse();
 		}
 		console.log(this.data);
+		fill(255);
+		noStroke();
+		text(this.data, this.x, this.y);
 		if (this.right != null) {
 			this.right.traverse();
 		}

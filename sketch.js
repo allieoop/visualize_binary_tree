@@ -1,8 +1,9 @@
 var root;
 
 function setup() {
-	noCanvas();
-	root = new Node(5);
+	createCanvas(640, 480);
+	background(0);
+	root = new Node(5, width/2, height/2);
 	for (var i = 0; i < 10; i++) {
 		root.insert(new Node(floor(random(0,10))));
 	}
@@ -16,5 +17,4 @@ function setup() {
 }
 
 function draw() {
-	ellipse(50, 50, 80, 80);
 }
