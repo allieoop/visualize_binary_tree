@@ -32,11 +32,39 @@ class Node {
 			this.left.traverse();
 		}
 		console.log(this.data);
+		fill(0);
+		ellipse(this.x, this.y, 30, 30);
 		fill(255);
 		noStroke();
 		text(this.data, this.x, this.y);
+		textAlign(CENTER);
 		if (this.right != null) {
 			this.right.traverse();
+		}
+	}
+
+	draw_tree(parent) {
+		if (this.left != null) {
+			this.left.draw_tree(this);
+		}
+		console.log(this.data);
+		// draw line
+		if (parent != null) {
+			console.log("hi");
+			stroke(10);
+			//fill(0);
+			line(parent.x, parent.y, this.x, this.y);
+		}
+		// draw node
+		fill(0);
+		ellipse(this.x, this.y, 30, 30);
+		// draw text
+		fill(255);
+		noStroke();
+		text(this.data, this.x, this.y);
+		textAlign(CENTER);
+		if (this.right != null) {
+			this.right.draw_tree(this);
 		}
 	}
 
