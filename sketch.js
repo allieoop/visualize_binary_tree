@@ -4,15 +4,10 @@ function setup() {
 	createCanvas(640, 480);
 	background(255);
 	root = new Node(5, width/2, height/2);
-	for (var i = 0; i < 10; i++) {
-		root.insert(new Node(floor(random(0,10))));
+	for (var i = 0; i < 7; i++) {
+		root.insert(new Node(floor(random(0,10)), width/2, height/2));
 	}
 	console.log(root);
-	node = root.search(3);
-	if (node != null) { 
-		console.log("found!")
-		console.log(node);
-	}
 	//root.traverse();
 	root.draw_tree(null);
 }
