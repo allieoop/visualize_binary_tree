@@ -11,7 +11,10 @@ class Node {
 	}
 
 	insert(node) {
-		if (node.data <= this.data) {
+		if (node.data == this.data) {
+			return this;
+		}
+		if (node.data < this.data) {
 			if (this.left == null) {
 				this.left = node;
 				this.left.level += 1;
@@ -33,6 +36,7 @@ class Node {
 			}
 		}
 		this.height = Node.get_height(this);
+		return Node.rebalance(this);
 	}
 
 	// height is the longest path from given node down to a leaf
@@ -45,16 +49,41 @@ class Node {
 		return 1 + max(this.get_height(node.left), this.get_height(node.right));
 	}
 
-	rotate_right(node) {
-		new_root = node.left;
-		node.left = new_root.right;
-		new_root.right = node;
+	static update_heights(node) {
+		if (node == null) {
+			return;
+		}
+		node.height = Node.get_height(node);
+		this.update_heights(node.left);
+		this.update_heights(node.right);
 	}
 
-	rotate_left(node) {
-		new_root = node.right;
+	static rebalance(node) {
+		var balance = Node.get_height(node.right) - Node.get_height(node.left);
+		if (balance < -1) {
+			console.log("rotate_left on " + node.data);
+			return Node.rotate_left(node);
+		} else if (balance > 1) {
+			console.log("rotate_right on " + node.data);
+			return Node.rotate_right(node);
+		}
+		return node;
+	}
+
+	static rotate_left(node) {
+		var new_root = node.left;
+		node.left = new_root.right;
+		new_root.right = node;
+		Node.update_heights(node);
+		return new_root;
+	}
+
+	static rotate_right(node) {
+		var new_root = node.right;
 		node.right = new_root.left;
 		new_root.left = node;
+		Node.update_heights(node);
+		return new_root;
 	}
 
 	traverse() {
