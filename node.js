@@ -14,6 +14,7 @@ class Node {
 		if (node.data == this.data) {
 			return this;
 		}
+
 		if (node.data < this.data) {
 			if (this.left == null) {
 				this.left = node;
@@ -22,7 +23,7 @@ class Node {
 				this.left.y = this.y + 20;
 			} else {
 				node.level = this.left.level;
-				this.left.insert(node);
+				this.left = this.left.insert(node);
 			}
 		} else {
 			if (this.right == null) {
@@ -32,10 +33,12 @@ class Node {
 				this.right.y = this.y + 20;
 			} else {
 				node.level = this.right.level;
-				this.right.insert(node);
+				this.right = this.right.insert(node);
 			}
 		}
+
 		this.height = Node.get_height(this);
+		this.balance = Node.get_balance_factor(this);
 		return Node.rebalance(this);
 	}
 
@@ -46,7 +49,7 @@ class Node {
 			return -1;
 		}
 
-		return 1 + max(this.get_height(node.left), this.get_height(node.right));
+		return 1 + Math.max(this.get_height(node.left), this.get_height(node.right));
 	}
 
 	static update_heights(node) {
@@ -58,32 +61,104 @@ class Node {
 		this.update_heights(node.right);
 	}
 
+	static get_balance_factor(node) {
+		return Node.get_height(node.right) - Node.get_height(node.left);
+	}
+
 	static rebalance(node) {
-		var balance = Node.get_height(node.right) - Node.get_height(node.left);
-		if (balance < -1) {
-			console.log("rotate_left on " + node.data);
-			return Node.rotate_left(node);
-		} else if (balance > 1) {
-			console.log("rotate_right on " + node.data);
-			return Node.rotate_right(node);
+		if (node == null) {
+			return node;
 		}
+
+		if (node.balance < -1) {
+			if (node.left.balance < 0 ) { 		// Left Left
+				return Node.rotate_right(node);
+			} else {							// Left Right
+				node.left = Node.rotate_left(node.left);
+				return Node.rotate_right(node);
+			}
+		}
+
+		if (node.balance > 1) {
+			if (node.right.balance > 0) { 		// Right Right
+				return Node.rotate_left(node);
+			} else {							// Right Left
+				node.right = Node.rotate_right(node.right);			
+				return Node.rotate_left(node);
+			}
+		}
+
 		return node;
 	}
 
-	static rotate_left(node) {
+	static rotate_right(node) {
 		var new_root = node.left;
 		node.left = new_root.right;
 		new_root.right = node;
-		Node.update_heights(node);
+
+		// update heights
+		Node.update_heights(new_root);
+
+		// update levels
+		new_root.level--;
+		Node.decrease_levels(new_root.left);
+		new_root.right.level++;
+		Node.increase_levels(new_root.right.right);	
+
 		return new_root;
 	}
 
-	static rotate_right(node) {
+	static rotate_left(node) {
+		// rotate
 		var new_root = node.right;
 		node.right = new_root.left;
 		new_root.left = node;
-		Node.update_heights(node);
+
+		// update heights
+		Node.update_heights(new_root);
+
+		// update levels
+		new_root.level--;
+		Node.decrease_levels(new_root.right);
+		new_root.left.level++;
+		Node.increase_levels(new_root.left.left);
+
 		return new_root;
+	}
+
+	static decrease_levels(node) {
+		if (node == null) {
+			return;
+		}
+		node.level--;
+		Node.decrease_levels(node.left);
+		Node.decrease_levels(node.right);
+	}
+
+	static increase_levels(node) {
+		if (node == null) {
+			return;
+		}
+		node.level++;
+		Node.increase_levels(node.left);
+		Node.increase_levels(node.right);
+	}
+
+	draw_tree(x, y) {
+		if (this.left != null) {
+			this.left.draw_tree(x-40, y+20);
+		}
+		// draw node
+		fill(0);
+		ellipse(x, y, 30, 30);
+		// draw text
+		fill(255);
+		noStroke();
+		text(this.data, x, y);
+		textAlign(CENTER);
+		if (this.right != null) {
+			this.right.draw_tree(x+40, y+20);
+		}
 	}
 
 	traverse() {
@@ -91,37 +166,8 @@ class Node {
 			this.left.traverse();
 		}
 		console.log(this.data);
-		fill(0);
-		ellipse(this.x, this.y, 30, 30);
-		fill(255);
-		noStroke();
-		text(this.data, this.x, this.y);
-		textAlign(CENTER);
 		if (this.right != null) {
 			this.right.traverse();
-		}
-	}
-
-	draw_tree(parent) {
-		if (this.left != null) {
-			this.left.draw_tree(this);
-		}
-		console.log(this.data);
-		// draw line
-		if (parent != null) {
-			stroke(10);
-			line(parent.x, parent.y, this.x, this.y);
-		}
-		// draw node
-		fill(0);
-		ellipse(this.x, this.y, 30, 30);
-		// draw text
-		fill(255);
-		noStroke();
-		text(this.data, this.x, this.y);
-		textAlign(CENTER);
-		if (this.right != null) {
-			this.right.draw_tree(this);
 		}
 	}
 
