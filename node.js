@@ -1,3 +1,4 @@
+var global_counter = 0;
 class Node {
 	constructor(val, x, y) {
 		this.left = null;
@@ -144,9 +145,46 @@ class Node {
 		Node.increase_levels(node.right);
 	}
 
+	knuth_update_postions() {
+		if (this.left != null) {
+			this.left.knuth_update_postions();
+		}
+
+		this.x = 50 + global_counter*40;
+		this.y = 100 + this.level*40;
+
+		global_counter++;
+
+		if (this.right != null) {
+			this.right.knuth_update_postions();
+		}
+	}
+
+	draw(parent) {
+		if (this.left != null) {
+			this.left.draw(this);
+		}
+		// draw node
+		fill(0);
+		ellipse(this.x, this.y, 30, 30);
+		// draw line
+		if (parent != null) {
+			stroke(10);
+			line(parent.x, parent.y, this.x, this.y);
+		}
+		// draw text
+		fill(255);
+		noStroke();
+		text(this.data, this.x, this.y);
+		textAlign(CENTER);
+		if (this.right != null) {
+			this.right.draw(this);
+		}
+	}
+
 	draw_tree(x, y) {
 		if (this.left != null) {
-			this.left.draw_tree(x-40, y+20);
+			this.left.draw_tree(x-40, y+40);
 		}
 		// draw node
 		fill(0);
@@ -157,7 +195,7 @@ class Node {
 		text(this.data, x, y);
 		textAlign(CENTER);
 		if (this.right != null) {
-			this.right.draw_tree(x+40, y+20);
+			this.right.draw_tree(x+40, y+40);
 		}
 	}
 

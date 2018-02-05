@@ -1,9 +1,9 @@
 var root;
 var nodes = new Array();
-var nodes_length = 10;
+var nodes_length = 12;
 
 function setup() {
-	createCanvas(640, 480);
+	createCanvas(800, 480);
 	frameRate(1);
 
 	root = new Node(3, width/2, height/2);
@@ -16,19 +16,28 @@ function setup() {
 var j;
 function draw() {
 	background(255);
-	if (j == null) {
-		root.draw_tree(width/2, height/2);
+	//translate(width/2, height/2);
+	if (j == null) { // TODO: insert the root node so I don't have to do this
+		root.knuth_update_postions();
+		global_counter = 0;
+		root.draw();
 		j = 0;
 	} else if (j < nodes_length) {
 		root = root.insert(nodes[j]);
-		root.draw_tree(width/2, height/2);
+		root.knuth_update_postions();
+		global_counter = 0;
+		root.draw();
 		j++;
-	} else if (j == nodes_length) {
+	} else if (j == nodes_length) { // just here for logging
 		console.log(root);
-		root.draw_tree(width/2, height/2);
+		root.knuth_update_postions();
+		global_counter = 0;
+		root.draw();
 		j++;
-	} else {
-		root.draw_tree(width/2, height/2);
+	} else { // continuously draw the whole tree
+		root.knuth_update_postions();
+		global_counter = 0;
+		root.draw();	
 	}
 }
 
